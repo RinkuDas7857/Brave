@@ -73,6 +73,14 @@ interface ServiceHandler {
   [EnableIfNot=is_android]
   ResetConnectionState();
 
+  [EnableIfNot=is_android]
+  EnableOnDemand(bool enable);
+
+  [EnableIfNot=is_android]
+  // true to |available| when on demand feature is supported.
+  // |enabled| is only valid when |available| is true.
+  GetOnDemandState() => (bool available, bool enabled);
+
   [EnableIf=is_android]
   GetPurchaseToken() => (string token);
 };
