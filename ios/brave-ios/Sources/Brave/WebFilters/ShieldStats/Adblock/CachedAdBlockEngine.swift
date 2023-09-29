@@ -200,6 +200,7 @@ public class CachedAdBlockEngine {
     frameURL: URL,
     isMainFrame: Bool,
     domain: Domain,
+    isDeAmpEnabled: Bool,
     index: Int
   ) async throws -> Set<UserScriptType> {
     if let userScriptTypes = cachedFrameScriptTypes.getElement(frameURL) {
@@ -217,7 +218,7 @@ public class CachedAdBlockEngine {
         isMainFrame: isMainFrame,
         source: source,
         order: index,
-        isDeAMPEnabled: Preferences.Shields.autoRedirectAMPPages.value
+        isDeAMPEnabled: isDeAmpEnabled
       )
 
       userScriptTypes.insert(.engineScript(configuration))
