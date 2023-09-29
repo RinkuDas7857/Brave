@@ -24,7 +24,7 @@ void AddDATBufferToFilterSet(uint8_t permission_mask,
 
 TestFiltersProvider::TestFiltersProvider(const std::string& rules,
                                          const std::string& resources)
-    : AdBlockFiltersProvider(true), rules_(rules), resources_(resources) {}
+    : TestFiltersProvider(rules, resources, true, 0) {}
 TestFiltersProvider::TestFiltersProvider(const std::string& rules,
                                          const std::string& resources,
                                          bool engine_is_default,
@@ -32,7 +32,9 @@ TestFiltersProvider::TestFiltersProvider(const std::string& rules,
     : AdBlockFiltersProvider(engine_is_default),
       rules_(rules),
       resources_(resources),
-      permission_mask_(permission_mask) {}
+      permission_mask_(permission_mask) {
+  NotifyObservers(engine_is_default_);
+}
 
 TestFiltersProvider::~TestFiltersProvider() = default;
 
