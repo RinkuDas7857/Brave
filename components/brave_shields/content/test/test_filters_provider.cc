@@ -10,6 +10,8 @@
 
 #include "brave/components/brave_shields/core/browser/ad_block_filters_provider.h"
 
+using brave_component_updater::DATFileDataBuffer;
+
 namespace brave_shields {
 
 namespace {
@@ -22,16 +24,13 @@ void AddDATBufferToFilterSet(uint8_t permission_mask,
 
 }  // namespace
 
+TestFiltersProvider::TestFiltersProvider(const std::string& rules)
+    : TestFiltersProvider(rules, true, 0) {}
 TestFiltersProvider::TestFiltersProvider(const std::string& rules,
-                                         const std::string& resources)
-    : TestFiltersProvider(rules, resources, true, 0) {}
-TestFiltersProvider::TestFiltersProvider(const std::string& rules,
-                                         const std::string& resources,
                                          bool engine_is_default,
                                          uint8_t permission_mask)
     : AdBlockFiltersProvider(engine_is_default),
       rules_(rules),
-      resources_(resources),
       permission_mask_(permission_mask) {
   NotifyObservers(engine_is_default_);
 }
@@ -48,11 +47,6 @@ void TestFiltersProvider::LoadFilterSet(
   auto buffer = std::vector<unsigned char>(rules_.begin(), rules_.end());
   std::move(cb).Run(
       base::BindOnce(&AddDATBufferToFilterSet, permission_mask_, buffer));
-}
-
-void TestFiltersProvider::LoadResources(
-    base::OnceCallback<void(const std::string& resources_json)> cb) {
-  std::move(cb).Run(resources_);
 }
 
 }  // namespace brave_shields
