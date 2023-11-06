@@ -1,0 +1,13 @@
+diff --git a/ui/views/view.cc b/ui/views/view.cc
+index 022565a3b15b1085243db70433a6efc60590fe78..c3c6189809a8fde235f872a3a4dd9a838444ca43 100644
+--- a/ui/views/view.cc
++++ b/ui/views/view.cc
+@@ -1019,7 +1019,7 @@ void View::ConvertPointToTarget(const View* source,
+     return;
+ 
+   const View* root = GetHierarchyRoot(target);
+-#if BUILDFLAG(IS_MAC)
++#if BUILDFLAG(IS_MAC) || BUILDFLAG(IS_WIN)
+   // If the root views don't match make sure we are in the same widget tree.
+   // Full screen in macOS creates a child widget that hosts top chrome.
+   // TODO(bur): Remove this check when top chrome can be composited into its own
