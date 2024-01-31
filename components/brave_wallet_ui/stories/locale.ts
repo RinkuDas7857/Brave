@@ -139,7 +139,7 @@ provideStrings({
   braveWalletButtonContinue: 'Continue',
   braveWalletContinueWithXItems: 'Continue with $1 $2',
   braveWalletButtonNext: 'Next',
-  braveWalletButtonGotIt: 'Got it',
+  braveWalletButtonGotIt: 'View my recovery phrase',
   braveWalletButtonCopy: 'Copy',
   braveWalletButtonCopied: 'Copied!',
   braveWalletButtonVerify: 'Verify',
@@ -170,6 +170,7 @@ provideStrings({
     '©2023 Brave Software Inc. Brave and the Brave logo are registered ' +
     'trademarks of Brave. Other product names and logos may be trademarks ' +
     'of their respective companies. All rights reserved.',
+  braveWalletWelcomeDividerText: 'or',
 
   // Onboarding - Disclosures
   braveWalletDisclosuresTitle: 'Before we begin',
@@ -224,8 +225,7 @@ provideStrings({
   braveWalletOnboardingRecoveryPhraseBackupIntroDescription:
     'Your recovery phrase is the key to access your wallet in case you forget your password or lose your device.',
   braveWalletRecoveryPhraseBackupWarningImportant:
-    '$1Important:$2 Never share your recovery phrase. ' +
-    'Anyone with this phrase can take your assets forever.',
+    'Keep it in a secure place that is not accessible to others and avoid sharing it with anyone.',
 
   // Onboarding - Backup Wallet - Recovery Phrase Backup
   braveWalletRecoveryPhraseBackupTitle: 'Back up your wallet recovery phrase',
@@ -234,6 +234,10 @@ provideStrings({
     'Keep it safe, and never share it with anyone else.',
   braveWalletCopiedToClipboard: 'Copied to clipboard',
   braveWalletClickToSeeRecoveryPhrase: 'Click to see your phrase',
+  braveWalletSkipBackupWarning:
+    'You can skip this step now, but you still need to back up your recovery phrase to ensure account security.',
+  braveWalletSkipBackup: 'I’ll back up later',
+  braveWalletGoBack: 'Go back',
 
   // Onboarding - Backup Wallet - Verify Recovery Phrase
   braveWalletVerifyRecoveryPhraseTitle: 'Verify your recovery phrase',
