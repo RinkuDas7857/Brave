@@ -21,8 +21,9 @@ import { BraveWallet, WalletRoutes } from '../../../../constants/types'
 import { OnboardingContentLayout } from '../components/onboarding-content-layout/onboarding-content-layout'
 
 // styles
-import { VerticalSpace } from '../../../../components/shared/style'
+import { Column, VerticalSpace } from '../../../../components/shared/style'
 import { IntroImg, Title, SubTitle } from './onboarding-success.style'
+import { ContinueButton } from '../onboarding.style'
 
 export const OnboardingSuccess = () => {
   // routing
@@ -39,7 +40,6 @@ export const OnboardingSuccess = () => {
     dispatch(WalletPageActions.walletSetupComplete(true))
     history.push(WalletRoutes.PortfolioAssets)
   }, [])
-  console.log(onComplete)
 
   // effects
   React.useEffect(() => {
@@ -48,14 +48,20 @@ export const OnboardingSuccess = () => {
 
   // render
   return (
-    <OnboardingContentLayout>
+    <OnboardingContentLayout showBackButton={false}>
       <IntroImg />
-      <VerticalSpace space='36px' />
       <Title>{getLocale('braveWalletOnboardingSuccessTitle')}</Title>
       <VerticalSpace space='16px' />
       <SubTitle>
         {getLocale('braveWalletOnboardingSuccessDescription')}
       </SubTitle>
+      <VerticalSpace space='100px' />
+      <Column>
+        <ContinueButton onClick={onComplete}>
+          {getLocale('braveWalletOnboardingSuccessGoToPortfolio')}
+        </ContinueButton>
+      </Column>
+      <VerticalSpace space='100px' />
     </OnboardingContentLayout>
   )
 }

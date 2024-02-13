@@ -294,7 +294,7 @@ provideStrings({
   // Creating Wallet
   braveWalletCreatingWallet: 'Creating Wallet...',
 
-  // Create Password - Stength Tooltip
+  // Create Password - Strength Tooltip
   braveWalletPasswordStrengthTooltipHeading: 'Password should have:',
   braveWalletPasswordStrengthTooltipIsLongEnough: 'At least 8 characters',
 
@@ -305,6 +305,7 @@ provideStrings({
   braveWalletBuyCryptoButton: 'Buy crypto',
   braveWalletDepositCryptoButton: 'Deposit',
   braveWalletLearnAboutMyWallet: 'Learn more about my new wallet',
+  braveWalletOnboardingSuccessGoToPortfolio: 'Go to portfolio',
 
   // Wallet Article Links
   braveWalletArticleLinkWhatsARecoveryPhrase: 'What’s a recovery phrase?',
