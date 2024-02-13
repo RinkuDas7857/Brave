@@ -42,6 +42,8 @@ V8_EXPORT ExecutingScript GetExecutingScript(Isolate*,
 V8_EXPORT std::vector<ExecutingScript> GetAllExecutingScripts(Isolate*);
 V8_EXPORT void SetPageGraphDelegate(Isolate*,
                                     PageGraphDelegate* page_graph_delegate);
+V8_EXPORT Local<Value> SerializeValue(Local<Context> context,
+                                      Local<Value> value);
 
 }  // namespace page_graph
 }  // namespace v8

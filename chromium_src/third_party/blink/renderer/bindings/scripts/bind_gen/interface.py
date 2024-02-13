@@ -40,7 +40,9 @@ _PAGE_GRAPH_TRACKED_ITEMS = {
         "toBlob",
         "toDataURL",
     },
+    "Geolocation": {"*"},
     "Location": {"*"},
+    "MediaDevices": {"*"},
     "Navigator": {"*"},
     "Performance": {"*"},
     "PerformanceObserver": {"*"},
@@ -97,7 +99,7 @@ def _to_page_graph_blink_receiver_data(arg):
 
 
 def _to_page_graph_blink_arg(arg):
-    return "ToPageGraphBlinkArg({})".format(arg)
+    return "ToPageGraphBlinkArg(${{current_script_state}}, {})".format(arg)
 
 
 ### Helpers end.
@@ -221,12 +223,17 @@ def _append_report_page_graph_api_call_event(cg_context, expr):
     else:
         return_value = _to_page_graph_blink_arg("return_value")
 
-    pattern = (";\n"
-               "if (UNLIKELY(${page_graph_enabled})) {{\n"
-               "  probe::RegisterPageGraphWebAPICallWithResult("
-               "${current_execution_context}, \n"
-               "${page_graph_binding_name}, {_1}, {{{_2}}}, {_3}, {_4});\n"
-               "}}")
+    pattern = (
+        ";\n"
+        "if (UNLIKELY(${page_graph_enabled})) {{\n"
+        "  if (auto scope = ScopedPageGraphCall(); scope.has_value()) {{\n"
+        "    probe::RegisterPageGraphWebAPICallWithResult("
+        "      ${current_execution_context}, \n"
+        "      ${page_graph_binding_name}, {_1}, \n"
+        "      CreatePageGraphBlinkArgs({_2}), \n"
+        "      {_3}, {_4});\n"
+        "  }}"
+        "}}")
     _1 = receiver_data
     _2 = args
     _3 = exception_state

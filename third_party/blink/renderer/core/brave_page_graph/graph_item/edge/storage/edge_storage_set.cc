@@ -16,8 +16,9 @@ EdgeStorageSet::EdgeStorageSet(GraphItemContext* context,
                                NodeScript* out_node,
                                NodeStorage* in_node,
                                const String& key,
-                               const String& value)
-    : EdgeStorage(context, out_node, in_node, key), value_(value) {}
+                               const blink::PageGraphBlinkArg& value)
+    : EdgeStorage(context, out_node, in_node, key),
+      value_(blink::PageGraphBaseValueToString(value)) {}
 
 EdgeStorageSet::~EdgeStorageSet() = default;
 
