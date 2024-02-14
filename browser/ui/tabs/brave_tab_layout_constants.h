@@ -20,8 +20,8 @@ namespace brave_tabs {
 // `kHorizontalTabVerticalSpacing`.
 constexpr int kHorizontalTabViewHeight = 40;
 
-// The amount of space before the first tab.
-constexpr int kHorizontalTabStripLeftMargin = 8;
+// The amount of space before the first tab view.
+constexpr int kHorizontalTabStripLeftMargin = 3;
 
 // The amount of visual spacing between the top and bottom of tabs and the
 // bounds of the tab strip region. The portion of this space below tabs will be
