@@ -11,13 +11,30 @@
 #include "base/files/file_path.h"
 #include "base/task/thread_pool.h"
 #include "brave/components/brave_shields/core/browser/ad_block_component_installer.h"
+#include "brave/components/brave_shields/resources/grit/adblock_bundle.h"
+#include "components/component_updater/component_updater_service.h"
+#include "ui/base/resource/resource_bundle.h"
 
 constexpr char kListCatalogFile[] = "list_catalog.json";
+
+namespace {
+
+std::string LoadBundledResource() {
+  return ui::ResourceBundle::GetSharedInstance().LoadDataResourceString(
+      IDR_BRAVE_ADBLOCK_LIST_CATALOG);
+}
+
+}  // namespace
 
 namespace brave_shields {
 
 AdBlockFilterListCatalogProvider::AdBlockFilterListCatalogProvider(
     component_updater::ComponentUpdateService* cus) {
+  base::SequencedTaskRunner::GetCurrentDefault()->PostTaskAndReplyWithResult(
+      FROM_HERE, base::BindOnce(&LoadBundledResource),
+      base::BindOnce(
+          &AdBlockFilterListCatalogProvider::OnFilterListCatalogLoaded,
+          weak_factory_.GetWeakPtr()));
   // Can be nullptr in unit tests
   if (cus) {
     RegisterAdBlockFilterListCatalogComponent(
