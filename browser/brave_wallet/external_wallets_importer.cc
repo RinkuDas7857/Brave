@@ -377,7 +377,7 @@ void ExternalWalletsImporter::GetMnemonic(bool is_legacy_crypto_wallets,
 
   std::unique_ptr<PasswordEncryptor> encryptor =
       PasswordEncryptor::DeriveKeyFromPasswordUsingPbkdf2(
-          password, *salt_decoded, 10000, 256);
+          password, *salt_decoded, 600000, 256);
   DCHECK(encryptor);
 
   auto decrypted_keyrings =
