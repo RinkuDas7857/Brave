@@ -29,6 +29,12 @@ export default function SearchResults() {
 
   React.useEffect(() => {
     const listener = (result?: AutocompleteResult) => {
+      // The autocomplete provider generates a 'search-what-you-typed' result which includes
+      // the keyword (and is always for the default search engine). We filter it out, as it
+      // makes the results neater.
+      if (result) {
+        result.matches = result.matches.filter(r => r.type !== 'search-what-you-typed')
+      }
       setResult(result)
       setSelectedMatch(prev => {
         if (!result) return undefined

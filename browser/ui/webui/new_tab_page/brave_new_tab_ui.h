@@ -45,6 +45,8 @@ class BraveNewTabUI : public ui::MojoWebUIController,
   void BindInterface(
       mojo::PendingReceiver<omnibox::mojom::PageHandler> pending_page_handler);
 
+  RealboxHandler* realbox_handler() { return realbox_handler_.get(); }
+
  private:
   // new_tab_page::mojom::PageHandlerFactory:
   void CreatePageHandler(
