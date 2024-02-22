@@ -21,7 +21,8 @@
 namespace brave_wallet {
 
 // static
-mojo::PendingRemote<mojom::BitcoinWalletService> BitcoinWalletServiceFactory::GetForBrowserState(
+mojo::PendingRemote<mojom::BitcoinWalletService>
+BitcoinWalletServiceFactory::GetForBrowserState(
     ChromeBrowserState* browser_state) {
   return static_cast<BitcoinWalletService*>(
              GetInstance()->GetServiceForBrowserState(browser_state, true))
@@ -50,14 +51,15 @@ BitcoinWalletServiceFactory::BitcoinWalletServiceFactory()
 
 BitcoinWalletServiceFactory::~BitcoinWalletServiceFactory() = default;
 
-std::unique_ptr<KeyedService> BitcoinWalletServiceFactory::BuildServiceInstanceFor(
+std::unique_ptr<KeyedService>
+BitcoinWalletServiceFactory::BuildServiceInstanceFor(
     web::BrowserState* context) const {
   auto* browser_state = ChromeBrowserState::FromBrowserState(context);
 
   std::unique_ptr<BitcoinWalletService> service(new BitcoinWalletService(
-        KeyringServiceFactory::GetServiceForState(browser_state),
-                                    browser_state->GetPrefs(), browser_state->GetSharedURLLoaderFactory()));
-      
+      KeyringServiceFactory::GetServiceForState(browser_state),
+      browser_state->GetPrefs(), browser_state->GetSharedURLLoaderFactory()));
+
   return service;
 }
 

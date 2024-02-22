@@ -32,7 +32,8 @@ class BitcoinWalletServiceFactory : public BrowserStateKeyedServiceFactory {
   // Creates the service if it doesn't exist already for |browser_state|.
   static mojo::PendingRemote<mojom::BitcoinWalletService> GetForBrowserState(
       ChromeBrowserState* browser_state);
-  static BitcoinWalletService* GetServiceForState(ChromeBrowserState* browser_state);
+  static BitcoinWalletService* GetServiceForState(
+      ChromeBrowserState* browser_state);
 
   static BitcoinWalletServiceFactory* GetInstance();
 
@@ -51,7 +52,8 @@ class BitcoinWalletServiceFactory : public BrowserStateKeyedServiceFactory {
       web::BrowserState* context) const override;
 
   BitcoinWalletServiceFactory(const BitcoinWalletServiceFactory&) = delete;
-  BitcoinWalletServiceFactory& operator=(const BitcoinWalletServiceFactory&) = delete;
+  BitcoinWalletServiceFactory& operator=(const BitcoinWalletServiceFactory&) =
+      delete;
 };
 
 }  // namespace brave_wallet

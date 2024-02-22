@@ -147,47 +147,26 @@ public struct CryptoView: View {
             case .buySendSwap(let destination):
               switch destination.kind {
               case .buy:
-                BuyTokenView(
-                  keyringStore: keyringStore,
-                  networkStore: store.networkStore,
-                  buyTokenStore: store.openBuyTokenStore(destination.initialToken),
-                  onDismiss: {
-                    store.closeBSSStores()
-                    dismissAction()
-                  }
-                )
+                NavigationView {
+                  ChromeWebView(title: "Buy", urlString: "brave://wallet/crypto/fund-wallet")
+                    .navigationTitle("Buy")
+                    .navigationBarTitleDisplayMode(.inline)
+                }
+                .navigationViewStyle(.stack)
               case .send:
-                SendTokenView(
-                  keyringStore: keyringStore,
-                  networkStore: store.networkStore,
-                  sendTokenStore: store.openSendTokenStore(destination.initialToken),
-                  completion: { success in
-                    if success {
-                      store.closeBSSStores()
-                      dismissAction()
-                    }
-                  },
-                  onDismiss: {
-                    store.closeBSSStores()
-                    dismissAction()
-                  }
-                )
+                NavigationView {
+                  ChromeWebView(title: "Send", urlString: "brave://wallet/send")
+                    .navigationTitle("Send")
+                    .navigationBarTitleDisplayMode(.inline)
+                }
+                .navigationViewStyle(.stack)
               case .swap:
-                SwapCryptoView(
-                  keyringStore: keyringStore,
-                  networkStore: store.networkStore,
-                  swapTokensStore: store.openSwapTokenStore(destination.initialToken),
-                  completion: { success in
-                    if success {
-                      store.closeBSSStores()
-                      dismissAction()
-                    }
-                  },
-                  onDismiss: {
-                    store.closeBSSStores()
-                    dismissAction()
-                  }
-                )
+                NavigationView {
+                  ChromeWebView(title: "Swap", urlString: "brave://wallet/swap")
+                    .navigationTitle("Swap")
+                    .navigationBarTitleDisplayMode(.inline)
+                }
+                .navigationViewStyle(.stack)
               }
             case .settings:
               NavigationView {
@@ -326,26 +305,26 @@ private struct CryptoContainerView<DismissContent: ToolbarContent>: View {
         .sheet(item: $cryptoStore.buySendSwapDestination) { action in
           switch action.kind {
           case .buy:
-            BuyTokenView(
-              keyringStore: keyringStore,
-              networkStore: cryptoStore.networkStore,
-              buyTokenStore: cryptoStore.openBuyTokenStore(action.initialToken),
-              onDismiss: { cryptoStore.buySendSwapDestination = nil }
-            )
+            NavigationView {
+              ChromeWebView(title: "Buy", urlString: "brave://wallet/crypto/fund-wallet")
+                .navigationTitle("Buy")
+                .navigationBarTitleDisplayMode(.inline)
+            }
+            .navigationViewStyle(.stack)
           case .send:
-            SendTokenView(
-              keyringStore: keyringStore,
-              networkStore: cryptoStore.networkStore,
-              sendTokenStore: cryptoStore.openSendTokenStore(action.initialToken),
-              onDismiss: { cryptoStore.buySendSwapDestination = nil }
-            )
+            NavigationView {
+              ChromeWebView(title: "Send", urlString: "brave://wallet/send")
+                .navigationTitle("Send")
+                .navigationBarTitleDisplayMode(.inline)
+            }
+            .navigationViewStyle(.stack)
           case .swap:
-            SwapCryptoView(
-              keyringStore: keyringStore,
-              networkStore: cryptoStore.networkStore,
-              swapTokensStore: cryptoStore.openSwapTokenStore(action.initialToken),
-              onDismiss: { cryptoStore.buySendSwapDestination = nil }
-            )
+            NavigationView {
+              ChromeWebView(title: "Swap", urlString: "brave://wallet/swap")
+                .navigationTitle("Swap")
+                .navigationBarTitleDisplayMode(.inline)
+            }
+            .navigationViewStyle(.stack)
           }
         }
     )
@@ -383,5 +362,27 @@ private struct CryptoContainerView<DismissContent: ToolbarContent>: View {
         }
       )
     )
+  }
+}
+
+struct ChromeWebView: UIViewControllerRepresentable {
+
+  var title: String
+  let urlString: String
+
+  public func makeUIViewController(
+    context: UIViewControllerRepresentableContext<ChromeWebView>
+  ) -> ChromeWebViewController {
+    return ChromeWebViewController(privateBrowsing: false).then {
+      $0.title = title
+      $0.loadURL(urlString)
+    }
+  }
+
+  public func updateUIViewController(
+    _ uiViewController: ChromeWebViewController,
+    context: UIViewControllerRepresentableContext<ChromeWebView>
+  ) {
+    uiViewController.title = title
   }
 }
