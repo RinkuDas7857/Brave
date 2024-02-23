@@ -76,12 +76,12 @@ export const EvmNativeAssetOrErc20TokenTransfer = ({
   // memos
   const asset: IconAsset = React.useMemo(() => {
     const foundTokenId = transfer.asset.imageUrl
-      ? tokensRegistry?.fungibleIdsByChainId[network.chainId].find(
+      ? undefined
+      : tokensRegistry?.fungibleIdsByChainId[network.chainId].find(
           (id) =>
-            tokensRegistry.entities[id]?.contractAddress?.toLowerCase() ===
+            tokensRegistry?.entities[id]?.contractAddress?.toLowerCase() ===
             transfer.asset.address
         )
-      : undefined
 
     const foundTokenLogo =
       foundTokenId !== undefined
@@ -110,9 +110,6 @@ export const EvmNativeAssetOrErc20TokenTransfer = ({
     asset.contractAddress === NATIVE_EVM_ASSET_CONTRACT_ADDRESS ||
     asset.contractAddress === ''
 
-  const getTokenVerificationString =
-    getTransferTokenVerificationStatus(transfer)
-
   // render
   return (
     <Column
@@ -130,11 +127,9 @@ export const EvmNativeAssetOrErc20TokenTransfer = ({
         margin={'4px 0px 0px 0px'}
         alignItems='center'
         justifyContent='flex-start'
+        title={getTransferTokenVerificationStatusText(transfer)}
       >
-        <IconsWrapper
-          marginRight='0px'
-          title={getTokenVerificationString}
-        >
+        <IconsWrapper marginRight='0px'>
           <AssetIconWithPlaceholder
             asset={asset}
             network={network}
@@ -227,6 +222,7 @@ export const NonFungibleErcTokenTransfer = ({
         margin={'4px 0px 0px 0px'}
         alignItems='center'
         justifyContent='flex-start'
+        title={getTransferTokenVerificationStatusText(transfer)}
       >
         <IconsWrapper marginRight='0px'>
           {asset.isNft ? (
@@ -240,6 +236,11 @@ export const NonFungibleErcTokenTransfer = ({
               asset={asset}
               network={network}
             />
+          )}
+          {!transfer.asset.verified && (
+            <NetworkIconWrapper>
+              <UnverifiedTokenIndicator />
+            </NetworkIconWrapper>
           )}
         </IconsWrapper>
 
@@ -407,10 +408,12 @@ export const ErcTokenApproval = ({
   )
 }
 
-function getTransferTokenVerificationStatus(
+function getTransferTokenVerificationStatusText(
   transfer:
     | BraveWallet.BlowfishERC20TransferData
     | BraveWallet.BlowfishNativeAssetTransferData
+    | BraveWallet.BlowfishERC721TransferData
+    | BraveWallet.BlowfishERC1155TransferData
 ) {
   if (!transfer.asset.verified) {
     return getLocale('braveWalletTokenIsUnverified')
@@ -421,4 +424,105 @@ function getTransferTokenVerificationStatus(
         transfer.asset.lists.length.toString()
       )
     : getLocale('braveWalletTokenIsVerified')
+}
+
+export function getComponentForEvmApproval(
+  approval: BraveWallet.BlowfishEVMStateChange,
+  network: ChainInfo
+) {
+  const { data } = approval.rawInfo
+
+  if (data.erc20ApprovalData) {
+    return (
+      <ErcTokenApproval
+        key={approval.humanReadableDiff}
+        approval={data.erc20ApprovalData}
+        network={network}
+        isERC20={true}
+      />
+    )
+  }
+
+  if (data.erc1155ApprovalForAllData) {
+    return (
+      <ErcTokenApproval
+        key={approval.humanReadableDiff}
+        approval={data.erc1155ApprovalForAllData}
+        network={network}
+        isApprovalForAll={true}
+      />
+    )
+  }
+
+  if (data.erc721ApprovalData) {
+    return (
+      <ErcTokenApproval
+        key={approval.humanReadableDiff}
+        approval={data.erc721ApprovalData}
+        network={network}
+      />
+    )
+  }
+
+  if (data.erc721ApprovalForAllData) {
+    return (
+      <ErcTokenApproval
+        key={approval.humanReadableDiff}
+        approval={data.erc721ApprovalForAllData}
+        network={network}
+        isApprovalForAll={true}
+      />
+    )
+  }
+
+  return null
+}
+
+export function getComponentForEvmTransfer(
+  transfer: BraveWallet.BlowfishEVMStateChange,
+  network: ChainInfo
+) {
+  const { data } = transfer.rawInfo
+
+  if (data.erc1155TransferData) {
+    return (
+      <NonFungibleErcTokenTransfer
+        key={transfer.humanReadableDiff}
+        transfer={data.erc1155TransferData}
+        network={network}
+      />
+    )
+  }
+
+  if (data.erc20TransferData) {
+    return (
+      <EvmNativeAssetOrErc20TokenTransfer
+        key={transfer.humanReadableDiff}
+        transfer={data.erc20TransferData}
+        network={network}
+      />
+    )
+  }
+
+  if (data.nativeAssetTransferData) {
+    return (
+      <EvmNativeAssetOrErc20TokenTransfer
+        key={transfer.humanReadableDiff}
+        transfer={data.nativeAssetTransferData}
+        network={network}
+      />
+    )
+  }
+
+  if (data.erc721TransferData) {
+    return (
+      <NonFungibleErcTokenTransfer
+        key={transfer.humanReadableDiff}
+        transfer={data.erc721TransferData}
+        network={network}
+      />
+    )
+  }
+
+  return null
 }

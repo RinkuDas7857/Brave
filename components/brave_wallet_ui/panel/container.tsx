@@ -70,6 +70,10 @@ import {
   return this.toString()
 }
 
+// TODO(petemill): If initial data or UI takes a noticeable amount of time to
+// arrive consider rendering a "loading" indicator when `hasInitialized ===
+// false`, and also using `React.lazy` to put all the main UI in a separate JS
+// bundle and display that loading indicator ASAP.
 function Container() {
   // wallet selectors (safe)
   const hasInitialized = useSafeWalletSelector(WalletSelectors.hasInitialized)
@@ -293,7 +297,9 @@ function Container() {
         width={390}
         height={650}
       >
-        <LongWrapper>
+        <LongWrapper
+        // padding='0px'
+        >
           <PendingTransactionPanel
             selectedPendingTransaction={selectedPendingTransaction}
           />
