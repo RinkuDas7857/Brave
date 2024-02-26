@@ -13,14 +13,16 @@ function envValToString(envVal) {
 }
 
 // Gather all environment variable names.
+const processEnv = process.env
+const configEnv = config.defaultOptions.env
 const envKeys = new Set()
-Object.keys(process.env).forEach((item) => envKeys.add(item))
-Object.keys(config.defaultOptions.env).forEach((item) => envKeys.add(item))
+Object.keys(processEnv).forEach((item) => envKeys.add(item))
+Object.keys(configEnv).forEach((item) => envKeys.add(item))
 
 // Compare current environment with a required one and output updated values.
 for (let key of envKeys) {
-  const newEnvVal = envValToString(config.defaultOptions.env[key])
-  if (envValToString(process.env[key]) !== newEnvVal) {
+  const newEnvVal = envValToString(configEnv[key])
+  if (envValToString(processEnv[key]) !== newEnvVal) {
     process.stdout.write(`${key}=${newEnvVal}\n`)
   }
 }
