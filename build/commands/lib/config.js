@@ -6,12 +6,13 @@
 'use strict'
 
 const path = require('path')
-const fs = require('fs')
+const fs = require('fs-extra')
 const assert = require('assert')
 const dotenv = require('dotenv')
 const Log = require('./logging')
 
 let envConfig = null
+let packageConfig = null
 
 let dirName = __dirname
 // Use fs.realpathSync to normalize the path(__dirname could be c:\.. or C:\..).
@@ -21,15 +22,15 @@ if (process.platform === 'win32') {
 const rootDir = path.resolve(dirName, '..', '..', '..', '..', '..')
 const braveCoreDir = path.join(rootDir, 'src', 'brave')
 
-var packageConfig = function (key, sourceDir = braveCoreDir) {
-  let packages = { config: {} }
-  const configAbsolutePath = path.join(sourceDir, 'package.json')
-  if (fs.existsSync(configAbsolutePath)) {
-    packages = require(path.relative(__dirname, configAbsolutePath))
+const getPackageConfig = (key) => {
+  if (!packageConfig) {
+    const packagePath = path.join(braveCoreDir, 'package.json')
+    const parsedPackage = fs.readJSONSync(packagePath)
+    // packageConfig should include version string.
+    packageConfig = { ...parsedPackage.config, version: parsedPackage.version }
   }
 
-  // packages.config should include version string.
-  let obj = Object.assign({}, packages.config, { version: packages.version })
+  let obj = packageConfig
   for (var i = 0, len = key.length; i < len; i++) {
     if (!obj) {
       return obj
@@ -82,7 +83,7 @@ const getEnvConfig = (key, default_value = undefined) => {
   if (envConfigValue !== undefined)
     return envConfigValue
 
-  const packageConfigValue = packageConfig(key)
+  const packageConfigValue = getPackageConfig(key)
   if (packageConfigValue !== undefined)
     return packageConfigValue
 
@@ -103,7 +104,7 @@ const parseExtraInputs = (inputs, accumulator, callback) => {
 }
 
 const getBraveVersion = (ignorePatchVersionNumber) => {
-  const braveVersion = packageConfig(['version'])
+  const braveVersion = getPackageConfig(['version'])
   if (!ignorePatchVersionNumber) {
     return braveVersion
   }
