@@ -157,12 +157,6 @@ class ConversationDriver {
   // is expected.
   void OnNewPage(int64_t navigation_id);
 
-  // Set the flag to indicate that the page content can not be fetched on-demand
-  // and is dependent on intercepted subresources.
-  void SetIsContentSubresourceDependent(bool is_content_subresource_dependent) {
-    is_content_subresource_dependent_ = is_content_subresource_dependent;
-  }
-
  private:
   void InitEngine();
   void OnUserOptedIn();
@@ -223,7 +217,6 @@ class ConversationDriver {
   std::string article_text_;
   std::string content_invalidation_token_;
   bool is_page_text_fetch_in_progress_ = false;
-  bool is_content_subresource_dependent_ = false;
   std::unique_ptr<base::OneShotEvent> on_page_text_fetch_complete_;
 
   bool is_request_in_progress_ = false;
