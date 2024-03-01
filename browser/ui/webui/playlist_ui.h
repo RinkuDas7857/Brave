@@ -10,8 +10,13 @@
 #include <string>
 #include <vector>
 
+#include "base/memory/raw_ptr.h"
 #include "base/memory/weak_ptr.h"
 #include "brave/components/playlist/common/mojom/playlist.mojom.h"
+#include "chrome/browser/ui/global_media_controls/media_notification_service.h"
+#include "chrome/browser/ui/global_media_controls/media_notification_service_factory.h"
+#include "components/global_media_controls/public/media_item_manager.h"
+#include "components/global_media_controls/public/media_item_manager_observer.h"
 #include "content/public/browser/webui_config.h"
 #include "mojo/public/cpp/bindings/receiver_set.h"
 #include "ui/webui/mojo_bubble_web_ui_controller.h"
@@ -24,6 +29,30 @@ class BrowserContext;
 class GURL;
 
 namespace playlist {
+
+// BSC: experimental START
+// Brave specific copy of:
+// chrome/browser/ui/global_media_controls/media_toolbar_button_controller.h
+class BraveMediaToolbarButtonController
+    : public global_media_controls::MediaItemManagerObserver {
+ public:
+  BraveMediaToolbarButtonController(
+      global_media_controls::MediaItemManager* item_manager);
+  BraveMediaToolbarButtonController(const BraveMediaToolbarButtonController&) = delete;
+  BraveMediaToolbarButtonController& operator=(
+      const BraveMediaToolbarButtonController&) = delete;
+  ~BraveMediaToolbarButtonController() override;
+
+  // global_media_controls::MediaItemManagerObserver:
+  void OnItemListChanged() override;
+  void OnMediaDialogOpened() override;
+  void OnMediaDialogClosed() override;
+
+ private:
+  const raw_ptr<global_media_controls::MediaItemManager> item_manager_;
+};
+
+// BSC: experimental END
 
 class PlaylistUI : public ui::UntrustedWebUIController,
                    public playlist::mojom::PageHandlerFactory,
@@ -72,6 +101,11 @@ class PlaylistUI : public ui::UntrustedWebUIController,
 
   mojo::Receiver<playlist::mojom::PageHandlerFactory>
       page_handler_factory_receiver_{this};
+
+  // BSC: experimental START
+  const raw_ptr<MediaNotificationService> media_service_;
+  std::unique_ptr<BraveMediaToolbarButtonController> media_controller_;
+  // BSC: experimental END
 
   WEB_UI_CONTROLLER_TYPE_DECL();
 };

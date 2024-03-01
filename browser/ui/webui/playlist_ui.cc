@@ -124,6 +124,30 @@ class UntrustedPlayerUI : public ui::UntrustedWebUIController {
 
 }  // namespace
 
+// BSC: experimental START
+BraveMediaToolbarButtonController::BraveMediaToolbarButtonController(
+    global_media_controls::MediaItemManager* item_manager)
+    : item_manager_(item_manager) {
+  item_manager_->AddObserver(this);
+}
+
+BraveMediaToolbarButtonController::~BraveMediaToolbarButtonController() {
+  item_manager_->RemoveObserver(this);
+}
+
+void BraveMediaToolbarButtonController::OnItemListChanged() {
+  LOG(ERROR) << "BSC]] BraveMediaToolbarButtonController::OnItemListChanged";
+}
+
+void BraveMediaToolbarButtonController::OnMediaDialogOpened() {
+  LOG(ERROR) << "BSC]] BraveMediaToolbarButtonController::OnMediaDialogOpened";
+}
+
+void BraveMediaToolbarButtonController::OnMediaDialogClosed() {
+  LOG(ERROR) << "BSC]] BraveMediaToolbarButtonController::OnMediaDialogClosed";
+}
+// BSC: experimental END
+
 ////////////////////////////////////////////////////////////////////////////////
 // PlaylistUI
 //
@@ -141,7 +165,9 @@ bool PlaylistUI::ShouldBlockPlaylistWebUI(
 }
 
 PlaylistUI::PlaylistUI(content::WebUI* web_ui, const std::string& name)
-    : UntrustedWebUIController(web_ui) {
+    : UntrustedWebUIController(web_ui),
+      media_service_(MediaNotificationServiceFactory::GetForProfile(
+          Profile::FromWebUI(web_ui))) {
   // From MojoWebUIController
   web_ui->SetBindings(content::BINDINGS_POLICY_MOJO_WEB_UI);
 
@@ -199,6 +225,11 @@ void PlaylistUI::CreatePageHandler(
   native_ui_receivers_.Add(this, std::move(native_ui));
   service_receivers_.Add(service, std::move(pending_service));
   service->AddObserver(std::move(service_observer));
+
+  // BSC: experimental START
+  media_controller_ = std::make_unique<BraveMediaToolbarButtonController>(
+      media_service_->media_item_manager());
+  // BSC: experimental END
 
   // When WebUI calls this, mark that the page can be shown on sidebar.
   if (embedder_) {
