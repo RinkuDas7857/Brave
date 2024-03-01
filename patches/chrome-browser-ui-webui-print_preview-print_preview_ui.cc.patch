@@ -1,0 +1,13 @@
+diff --git a/chrome/browser/ui/webui/print_preview/print_preview_ui.cc b/chrome/browser/ui/webui/print_preview/print_preview_ui.cc
+index ef26355bd31b8f464ec9e327718fdb15869c3a2e..eb15a784acebba819b7baade55d30aec94b19c5d 100644
+--- a/chrome/browser/ui/webui/print_preview/print_preview_ui.cc
++++ b/chrome/browser/ui/webui/print_preview/print_preview_ui.cc
+@@ -155,7 +155,7 @@ PrintPreviewRequestIdMap& GetPrintPreviewRequestIdMap() {
+ 
+ // PrintPreviewUI IDMap used to avoid exposing raw pointer addresses to WebUI.
+ // Only accessed on the UI thread.
+-base::LazyInstance<base::IDMap<PrintPreviewUI*>>::DestructorAtExit
++base::LazyInstance<base::IDMap<mojom::PrintPreviewUI*>>::DestructorAtExit
+     g_print_preview_ui_id_map = LAZY_INSTANCE_INITIALIZER;
+ 
+ void AddPrintPreviewStrings(content::WebUIDataSource* source) {
