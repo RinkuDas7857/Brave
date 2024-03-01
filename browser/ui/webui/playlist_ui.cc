@@ -9,6 +9,7 @@
 
 #include "base/feature_list.h"
 #include "base/strings/strcat.h"
+#include "base/unguessable_token.h"
 #include "brave/browser/playlist/playlist_service_factory.h"
 #include "brave/browser/ui/playlist/playlist_dialogs.h"
 #include "brave/browser/ui/webui/brave_webui_source.h"
@@ -26,6 +27,7 @@
 #include "components/prefs/pref_service.h"
 #include "components/sessions/content/session_tab_helper.h"
 #include "components/user_prefs/user_prefs.h"
+#include "content/public/browser/media_session_service.h"
 #include "content/public/browser/web_ui.h"
 #include "content/public/browser/web_ui_data_source.h"
 #include "content/public/common/bindings_policy.h"
@@ -126,9 +128,14 @@ class UntrustedPlayerUI : public ui::UntrustedWebUIController {
 
 // BSC: experimental START
 BraveMediaToolbarButtonController::BraveMediaToolbarButtonController(
+    PlaylistUI* playlist_ui,
     global_media_controls::MediaItemManager* item_manager)
-    : item_manager_(item_manager) {
+    : playlist_ui_(playlist_ui), item_manager_(item_manager) {
   item_manager_->AddObserver(this);
+  // Connect to the controller manager so we can create media controllers for
+  // media sessions.
+  content::GetMediaSessionService().BindMediaControllerManager(
+      controller_manager_remote_.BindNewPipeAndPassReceiver());
 }
 
 BraveMediaToolbarButtonController::~BraveMediaToolbarButtonController() {
@@ -136,7 +143,26 @@ BraveMediaToolbarButtonController::~BraveMediaToolbarButtonController() {
 }
 
 void BraveMediaToolbarButtonController::OnItemListChanged() {
-  LOG(ERROR) << "BSC]] BraveMediaToolbarButtonController::OnItemListChanged";
+  LOG(ERROR) << "BSC]] OnItemListChanged START";
+
+  std::list<std::string> item_ids = item_manager_->GetActiveItemIds();
+  for (const std::string& id : item_ids) {
+    // example ID looks like `F379FAE4F5D156914132133457C803AD`
+    // auto* item_producer = item_manager_->GetItemProducer(id);
+    // if (item_producer->IsItemActivelyPlaying(id)) {
+    //   LOG(ERROR) << "BSC]] \"" << id << "\" is actively playing";
+    // } else {
+    //   LOG(ERROR) << "BSC]] \"" << id << "\" is not actively playing";
+    // }
+
+    mojo::Remote<media_session::mojom::MediaController> item_controller;
+    controller_manager_remote_->CreateMediaControllerForSession(
+        item_controller.BindNewPipeAndPassReceiver(),
+        base::UnguessableToken::DeserializeFromString(id).value());
+    playlist_ui_->SetController(std::move(item_controller));
+  }
+
+  LOG(ERROR) << "BSC]] OnItemListChanged END";
 }
 
 void BraveMediaToolbarButtonController::OnMediaDialogOpened() {
@@ -228,6 +254,7 @@ void PlaylistUI::CreatePageHandler(
 
   // BSC: experimental START
   media_controller_ = std::make_unique<BraveMediaToolbarButtonController>(
+      this,
       media_service_->media_item_manager());
   // BSC: experimental END
 
@@ -253,6 +280,28 @@ void PlaylistUI::ShowMoveItemsUI(const std::string& playlist_id,
 void PlaylistUI::OpenSettingsPage() {
   playlist::ShowPlaylistSettings(web_ui()->GetWebContents());
 }
+
+// BSC: experimental START
+
+void PlaylistUI::SetController(
+    mojo::Remote<media_session::mojom::MediaController> controller) {
+  observer_receiver_.reset();
+
+  media_controller_remote_ = std::move(controller);
+  if (media_controller_remote_.is_bound()) {
+    // Bind an observer to the associated media controller.
+    media_controller_remote_->AddObserver(
+        observer_receiver_.BindNewPipeAndPassRemote());
+  }
+}
+
+void PlaylistUI::MediaSessionMetadataChanged(
+      const std::optional<media_session::MediaMetadata>& metadata) {
+  LOG(ERROR) << "BSC]] " << metadata->title;
+}
+
+// BSC: experimental END
+
 
 WEB_UI_CONTROLLER_TYPE_IMPL(PlaylistUI)
 

@@ -30,6 +30,8 @@ class GURL;
 
 namespace playlist {
 
+class PlaylistUI;
+
 // BSC: experimental START
 // Brave specific copy of:
 // chrome/browser/ui/global_media_controls/media_toolbar_button_controller.h
@@ -37,8 +39,10 @@ class BraveMediaToolbarButtonController
     : public global_media_controls::MediaItemManagerObserver {
  public:
   BraveMediaToolbarButtonController(
+      PlaylistUI* playlist_ui,
       global_media_controls::MediaItemManager* item_manager);
-  BraveMediaToolbarButtonController(const BraveMediaToolbarButtonController&) = delete;
+  BraveMediaToolbarButtonController(const BraveMediaToolbarButtonController&) =
+      delete;
   BraveMediaToolbarButtonController& operator=(
       const BraveMediaToolbarButtonController&) = delete;
   ~BraveMediaToolbarButtonController() override;
@@ -49,14 +53,20 @@ class BraveMediaToolbarButtonController
   void OnMediaDialogClosed() override;
 
  private:
+  const raw_ptr<PlaylistUI> playlist_ui_;
   const raw_ptr<global_media_controls::MediaItemManager> item_manager_;
+  // Connections with the media session service to listen for audio focus
+  // updates and control media sessions.
+  mojo::Remote<media_session::mojom::MediaControllerManager>
+      controller_manager_remote_;
 };
 
 // BSC: experimental END
 
 class PlaylistUI : public ui::UntrustedWebUIController,
                    public playlist::mojom::PageHandlerFactory,
-                   public playlist::mojom::PlaylistNativeUI {
+                   public playlist::mojom::PlaylistNativeUI,
+                   public media_session::mojom::MediaControllerObserver {
  public:
   static bool ShouldBlockPlaylistWebUI(content::BrowserContext* browser_context,
                                        const GURL& url);
@@ -93,6 +103,12 @@ class PlaylistUI : public ui::UntrustedWebUIController,
 
   static constexpr std::string GetWebUIName() { return "PlaylistPanel"; }
 
+  // BSC: experimental START
+ public:
+  void SetController(
+      mojo::Remote<media_session::mojom::MediaController> controller);
+  // BSC: experimental END
+
  private:
   base::WeakPtr<ui::MojoBubbleWebUIController::Embedder> embedder_;
 
@@ -105,6 +121,25 @@ class PlaylistUI : public ui::UntrustedWebUIController,
   // BSC: experimental START
   const raw_ptr<MediaNotificationService> media_service_;
   std::unique_ptr<BraveMediaToolbarButtonController> media_controller_;
+
+  // Used to receive updates to the Media Session playback state.
+  mojo::Receiver<media_session::mojom::MediaControllerObserver>
+      observer_receiver_{this};
+  // Used to request audio output be routed to a different device.
+  mojo::Remote<media_session::mojom::MediaController> media_controller_remote_;
+  // media_session::mojom::MediaControllerObserver:
+  void MediaSessionInfoChanged(
+      media_session::mojom::MediaSessionInfoPtr session_info) override {}
+  void MediaSessionMetadataChanged(
+      const std::optional<media_session::MediaMetadata>& metadata) override;
+  void MediaSessionActionsChanged(
+      const std::vector<media_session::mojom::MediaSessionAction>& actions)
+      override {}
+  void MediaSessionChanged(
+      const std::optional<base::UnguessableToken>& request_id) override {}
+  void MediaSessionPositionChanged(
+      const std::optional<media_session::MediaPosition>& position) override {}
+
   // BSC: experimental END
 
   WEB_UI_CONTROLLER_TYPE_DECL();
