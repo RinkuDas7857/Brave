@@ -238,7 +238,6 @@ IN_PROC_BROWSER_TEST_F(BraveMainDelegateBrowserTest, DisabledFeatures) {
       &heap_profiling::kHeapProfilerReporting,
       &history::kOrganicRepeatableQueries,
       &history::kSyncSegmentsData,
-      &history_clusters::kRenameJourneys,
       &history_clusters::kSidePanelJourneys,
       &history_clusters::features::kOnDeviceClustering,
       &history_clusters::features::kOnDeviceClusteringKeywordFiltering,
