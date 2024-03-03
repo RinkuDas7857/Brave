@@ -179,7 +179,6 @@ IN_PROC_BROWSER_TEST_F(BraveMainDelegateBrowserTest, DisabledFeatures) {
 #if BUILDFLAG(IS_WIN)
       &features::kAppBoundEncryptionMetrics,
 #endif
-      &features::kAttributionFencedFrameReportingBeacon,
       &features::kAttributionReportingCrossAppWebOverride,
       &features::kBookmarkTriggerForPrerender2,
       &features::kChromeLabs,
