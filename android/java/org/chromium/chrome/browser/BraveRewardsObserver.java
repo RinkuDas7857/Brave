@@ -21,14 +21,11 @@ public interface BraveRewardsObserver {
     default public void OnGetReconcileStamp(long timestamp){};
     default public void OnRecurringDonationUpdated(){};
     default public void OnResetTheWholeState(boolean success){};
-    default public void OnGrantFinish(int result){};
     default public void OnGetExternalWallet(String external_wallet){};
     default public void onGetAvailableCountries(String[] countries){};
     default public void OnExternalWalletConnected(){};
     default public void OnExternalWalletLoggedOut(){};
     default public void OnExternalWalletReconnected(){};
-    default public void OnClaimPromotion(int error_code){};
-    default public void onUnblindedTokensReady() {}
     default public void onReconcileComplete(int resultCode, int rewardsType, double amount) {}
     default public void OnRefreshPublisher(int status, String publisherKey){};
     default public void onSendContribution(boolean result){};

@@ -328,8 +328,6 @@ void TestRewardsEngineClient::GetClientInfo(GetClientInfoCallback callback) {
   std::move(callback).Run(std::move(info));
 }
 
-void TestRewardsEngineClient::UnblindedTokensReady() {}
-
 void TestRewardsEngineClient::ReconcileStampReset() {}
 
 void TestRewardsEngineClient::RunDBTransaction(

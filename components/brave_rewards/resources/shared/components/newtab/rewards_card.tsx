@@ -8,7 +8,6 @@ import * as React from 'react'
 import Icon from '@brave/leo/react/icon'
 
 import { LocaleContext, formatMessage } from '../../lib/locale_context'
-import { GrantInfo } from '../../lib/grant_info'
 import { ExternalWallet, getExternalWalletProviderName } from '../../lib/external_wallet'
 import { UserType } from '../../lib/user_type'
 import { ProviderPayoutStatus } from '../../lib/provider_payout_status'
@@ -24,7 +23,6 @@ import { TokenAmount } from '../token_amount'
 import { ExchangeAmount } from '../exchange_amount'
 import { NewTabLink } from '../new_tab_link'
 import { TermsOfService } from '../terms_of_service'
-import { GrantOverlay } from './grant_overlay'
 import { SelectCountryCard } from './select_country_card'
 import { PaymentStatusView } from '../payment_status_view'
 import { VBATNotice, shouldShowVBATNotice } from '../vbat_notice'
@@ -70,7 +68,6 @@ interface Props {
   minEarningsLastMonth: number
   maxEarningsLastMonth: number
   contributionsThisMonth: number
-  grantInfo: GrantInfo | null
   externalWallet: ExternalWallet | null
   publishersVisited: number
   canConnectAccount: boolean
@@ -78,7 +75,6 @@ interface Props {
   isTermsOfServiceUpdateRequired: boolean
   onEnableRewards: () => void
   onSelectCountry: () => void
-  onClaimGrant: () => void
   onSelfCustodyInviteDismissed: () => void
   onTermsOfServiceUpdateAccepted: () => void
 }
@@ -101,15 +97,6 @@ export function RewardsCard (props: Props) {
   }
 
   function renderBalance () {
-    if (props.grantInfo && props.grantInfo.amount > 0) {
-      return (
-        <GrantOverlay
-          grantInfo={props.grantInfo}
-          onClaim={props.onClaimGrant}
-        />
-      )
-    }
-
     const { externalWallet } = props
     if (externalWallet && externalWallet.status === mojom.WalletStatus.kLoggedOut) {
       const onClick = () => {

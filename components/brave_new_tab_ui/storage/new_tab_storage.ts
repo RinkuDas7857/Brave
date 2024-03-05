@@ -67,7 +67,6 @@ export const defaultState: NewTab.State = {
     userType: '',
     declaredCountry: '',
     needsBrowserUpgradeToServeAds: false,
-    promotions: [],
     totalContribution: 0.0,
     publishersVisitedCount: 0,
     selfCustodyInviteDismissed: false,
