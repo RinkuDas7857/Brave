@@ -127,9 +127,10 @@ class PlaylistUI : public ui::UntrustedWebUIController,
       observer_receiver_{this};
   // Used to request audio output be routed to a different device.
   mojo::Remote<media_session::mojom::MediaController> media_controller_remote_;
+
   // media_session::mojom::MediaControllerObserver:
   void MediaSessionInfoChanged(
-      media_session::mojom::MediaSessionInfoPtr session_info) override {}
+      media_session::mojom::MediaSessionInfoPtr session_info) override;
   void MediaSessionMetadataChanged(
       const std::optional<media_session::MediaMetadata>& metadata) override;
   void MediaSessionActionsChanged(

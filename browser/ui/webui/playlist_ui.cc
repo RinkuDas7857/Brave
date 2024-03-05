@@ -143,7 +143,7 @@ BraveMediaToolbarButtonController::~BraveMediaToolbarButtonController() {
 }
 
 void BraveMediaToolbarButtonController::OnItemListChanged() {
-  LOG(ERROR) << "BSC]] OnItemListChanged START";
+  LOG(ERROR) << "BSC]] OnItemListChanged";
 
   std::list<std::string> item_ids = item_manager_->GetActiveItemIds();
   for (const std::string& id : item_ids) {
@@ -161,16 +161,14 @@ void BraveMediaToolbarButtonController::OnItemListChanged() {
         base::UnguessableToken::DeserializeFromString(id).value());
     playlist_ui_->SetController(std::move(item_controller));
   }
-
-  LOG(ERROR) << "BSC]] OnItemListChanged END";
 }
 
 void BraveMediaToolbarButtonController::OnMediaDialogOpened() {
-  LOG(ERROR) << "BSC]] BraveMediaToolbarButtonController::OnMediaDialogOpened";
+  LOG(ERROR) << "BSC]] OnMediaDialogOpened";
 }
 
 void BraveMediaToolbarButtonController::OnMediaDialogClosed() {
-  LOG(ERROR) << "BSC]] BraveMediaToolbarButtonController::OnMediaDialogClosed";
+  LOG(ERROR) << "BSC]] OnMediaDialogClosed";
 }
 // BSC: experimental END
 
@@ -295,9 +293,53 @@ void PlaylistUI::SetController(
   }
 }
 
+void PlaylistUI::MediaSessionInfoChanged(
+    media_session::mojom::MediaSessionInfoPtr session_info) {
+  std::string playback_state_str = "<unknown>";
+  // TODO(bsclifton): I don't think this is right; use constants instead
+  switch (static_cast<int>(session_info->playback_state)) {
+    case 0:
+      playback_state_str = "The MediaSession is currently playing media.";
+      break;
+    case 1:
+      playback_state_str =
+          "The MediaSession is currently playing at a reduced volume "
+          "(ducking).";
+      break;
+    case 2:
+      playback_state_str = "The MediaSession is currently paused.";
+      break;
+    case 3:
+      playback_state_str = "The MediaSession is not currently playing media.";
+      break;
+  }
+
+  // see
+  // https://source.chromium.org/chromium/chromium/src/+/main:services/media_session/public/mojom/media_session.mojom
+  LOG(ERROR) << "BSC]] MediaSessionInfoChanged\n"
+             << "playback_state=" << playback_state_str << "\n"
+             << "is_controllable=" << session_info->is_controllable << "\n"
+             << "prefer_stop_for_gain_focus_loss="
+             << session_info->prefer_stop_for_gain_focus_loss << "\n"
+             << "is_sensitive=" << session_info->is_sensitive << "\n"
+             << "##################################################";
+}
+
 void PlaylistUI::MediaSessionMetadataChanged(
-      const std::optional<media_session::MediaMetadata>& metadata) {
-  LOG(ERROR) << "BSC]] " << metadata->title;
+    const std::optional<media_session::MediaMetadata>& metadata) {
+  LOG(ERROR) << "BSC]] MediaSessionMetadataChanged\n"
+                "title=\""
+             << metadata->title
+             << "\"\n"
+                "artist=\""
+             << metadata->artist
+             << "\"\n"
+                "album=\""
+             << metadata->album
+             << "\"\n"
+                "source_title=\""
+             << metadata->source_title << "\"" << "\n"
+             << "##################################################";
 }
 
 // BSC: experimental END
