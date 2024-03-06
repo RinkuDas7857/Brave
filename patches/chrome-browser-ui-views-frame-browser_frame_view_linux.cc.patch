@@ -1,0 +1,26 @@
+diff --git a/chrome/browser/ui/views/frame/browser_frame_view_linux.cc b/chrome/browser/ui/views/frame/browser_frame_view_linux.cc
+index 440242f15524c72598cd4ebd7be4da5ac3a3f358..ac8ddceab88b02b3af113229231327af4e90b730 100644
+--- a/chrome/browser/ui/views/frame/browser_frame_view_linux.cc
++++ b/chrome/browser/ui/views/frame/browser_frame_view_linux.cc
+@@ -15,6 +15,9 @@
+ #include "ui/views/layout/layout_provider.h"
+ #include "ui/views/window/window_button_order_provider.h"
+ 
++// TODO(simonhong): Remove patch
++#include "chrome/browser/ui/views/frame/immersive_mode_controller.h"
++
+ BrowserFrameViewLinux::BrowserFrameViewLinux(
+     BrowserFrame* frame,
+     BrowserView* browser_view,
+@@ -119,3 +122,11 @@ float BrowserFrameViewLinux::GetRestoredCornerRadiusDip() const {
+ int BrowserFrameViewLinux::GetTranslucentTopAreaHeight() const {
+   return 0;
+ }
++
++// TODO(simonhong): Remove patch
++void BrowserFrameViewLinux::OnFullscreenStateChanged() {
++  if (browser_view()->UsesImmersiveFullscreenMode()) {
++    browser_view()->immersive_mode_controller()->SetEnabled(
++        browser_view()->IsFullscreen());
++  }
++}
