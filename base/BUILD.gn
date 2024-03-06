@@ -19,13 +19,65 @@ source_set("base_unittests") {
   testonly = true
   sources = [
     "build_time_unittest.cc",
-    "feature_override_unittest.cc",
     "tools_sanity_unittest.cc",
   ]
+  if (!is_ios) {
+    sources += [ "feature_override_unittest.cc" ]
+  }
   deps = [
     "//base",
     "//base/test:test_support",
+    "//components/aggregation_service",
+    "//components/attribution_reporting",
+    "//components/autofill/core/common",
+    "//components/commerce/core:feature_list",
+    "//components/content_settings/core/common:features",
+    "//components/device_signals/core/common:features",
+    "//components/heap_profiling/in_process",
+    "//components/history_clusters/core",
+    "//components/language/core/common",
+    "//components/lens",
+    "//components/metrics/structured:structured_metrics_features",
+    "//components/network_time",
+    "//components/omnibox/browser",
+    "//components/optimization_guide/core",
+    "//components/page_image_service",
+    "//components/page_info/core",
+    "//components/performance_manager",
+    "//components/privacy_sandbox",
+    "//components/safe_browsing/core/common",
+    "//components/search",
+    "//components/segmentation_platform/public",
+    "//components/send_tab_to_self",
+    "//components/shared_highlighting/core/common",
+    "//components/signin/public/base:signin_buildflags",
+    "//components/subresource_filter/core/common",
+    "//components/subresource_filter/core/common",
+    "//components/translate/core/common",
+    "//gpu/config",
+    "//services/network/public/cpp",
     "//testing/gmock",
     "//testing/gtest",
+    "//ui/base",
   ]
+  if (!is_android && !is_ios) {
+    deps += [
+      "//chrome/browser",
+      "//chrome/browser/apps/link_capturing:link_capturing",
+      "//chrome/browser/companion/core",
+      "//chrome/browser/enterprise/connectors/analysis:features",
+      "//chrome/browser/ui",
+      "//chrome/common:chrome_features",
+      "//chrome/common/companion/visual_query:flags",
+    ]
+  }
+  if (!is_android) {
+    deps += [ "//components/manta" ]
+  }
+  if (!is_ios) {
+    deps += [
+      "//components/permissions",
+      "//services/device/public/cpp:device_features",
+    ]
+  }
 }
