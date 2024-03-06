@@ -17,7 +17,7 @@ import { getLocale } from '$web-common/locale'
 import SiteTitle from '../site_title'
 import Quote from '../quote'
 import ActionTypeLabel from '../action_type_label'
-import WarningLongPage from '../alerts/warning_long_page'
+import LongPageInfo from '../alerts/long_page_info'
 
 const CodeBlock = React.lazy(async () => ({ default: (await import('../code_block')).default.Block }))
 const CodeInline = React.lazy(async () => ({ default: (await import('../code_block')).default.Inline }))
@@ -178,11 +178,7 @@ function ConversationList(props: ConversationListProps) {
                   {isLoading && <span className={styles.caret} />}
                   {turn.selectedText && <Quote text={turn.selectedText} />}
                   {showSiteTitle && <div className={styles.siteTitleContainer}><SiteTitle size="default" /></div>}
-                  {showLongPageContentInfo &&
-                    <div className={styles.promptContainer}>
-                        <WarningLongPage />
-                    </div>
-                  }
+                  {showLongPageContentInfo && <LongPageInfo />}
                 </div>
               </div>
               {isAIAssistant ? (

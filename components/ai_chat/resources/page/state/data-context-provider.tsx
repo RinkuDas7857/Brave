@@ -166,6 +166,7 @@ function DataContextProvider (props: DataContextProviderProps) {
 
   const shouldShowLongPageWarning = React.useMemo(() => {
     if (
+      !isGenerating &&
       !hasDismissedLongPageWarning &&
       conversationHistory.length >= 1 &&
       siteInfo?.isContentTruncated
@@ -174,7 +175,7 @@ function DataContextProvider (props: DataContextProviderProps) {
     }
 
     return false
-  }, [conversationHistory, hasDismissedLongPageWarning, siteInfo?.isContentTruncated])
+  }, [conversationHistory, hasDismissedLongPageWarning, siteInfo?.isContentTruncated, isGenerating])
 
   const shouldShowLongConversationInfo = React.useMemo(() => {
     if (!currentModel) return false
