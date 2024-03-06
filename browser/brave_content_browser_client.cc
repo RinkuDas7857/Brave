@@ -524,9 +524,9 @@ void MaybeBindSkusSdkImpl(
 
 }  // namespace
 
-BraveContentBrowserClient::BraveContentBrowserClient() = default;
+BraveContentBrowserClient::BraveContentBrowserClient() {LOG(INFO) << "[IPFS] BraveContentBrowserClient"; }
 
-BraveContentBrowserClient::~BraveContentBrowserClient() = default;
+BraveContentBrowserClient::~BraveContentBrowserClient() {LOG(INFO) << "[IPFS] ~BraveContentBrowserClient"; }
 
 std::unique_ptr<content::BrowserMainParts>
 BraveContentBrowserClient::CreateBrowserMainParts(bool is_integration_test) {
@@ -753,6 +753,7 @@ void BraveContentBrowserClient::ExposeInterfacesToRenderer(
 void BraveContentBrowserClient::RegisterBrowserInterfaceBindersForFrame(
     content::RenderFrameHost* render_frame_host,
     mojo::BinderMapWithContext<content::RenderFrameHost*>* map) {
+LOG(INFO) << "[IPFS] BraveContentBrowserClient::RegisterBrowserInterfaceBindersForFrame";
   ChromeContentBrowserClient::RegisterBrowserInterfaceBindersForFrame(
       render_frame_host, map);
   map->Add<cosmetic_filters::mojom::CosmeticFiltersResources>(
