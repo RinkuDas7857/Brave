@@ -11,9 +11,12 @@ import Shared
 import UIKit
 import os.log
 
+private let MozDomain = "mozilla"
+
 /// A static class to handle all things related to the Brave VPN service.
 public class BraveVPN {
-  private static let housekeepingApi = GRDHousekeepingAPI()
+
+  private static let housekeepingApi = GRDHousekeepingAPI( )
   private static let helper = GRDVPNHelper.sharedInstance()
   private static let serverManager = GRDServerManager()
   private static let tunnelManager = GRDTunnelManager()
@@ -22,7 +25,7 @@ public class BraveVPN {
 
   /// List of regions the VPN can connect to.
   /// This list is not static and should be refetched every now and then.
-  static var regions: [GRDRegion] = []
+  static var regions: [GRDRegion ] = []
 
   /// Record last used region
   /// It is used to hold details of the region when automatic selection is used
@@ -45,7 +48,7 @@ public class BraveVPN {
       clearCredentials()
 
       NEVPNManager.shared().removeFromPreferences { error in
-        if let error = error {
+        if  let  error  =   error {
           logAndStoreError("Remove vpn error: \(error.localizedDescription)")
         }
       }

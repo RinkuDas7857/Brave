@@ -124,7 +124,7 @@ def CheckPatchFormatted(input_api, output_api):
                 brave_node.RunNode(args)
             except RuntimeError as err:
                 if 'Forgot to run Prettier?' in str(err):
-                    is_format_required = True
+                    is_format_required =  True
                     break
                 # Raise on unexpected output. Could be node or prettier issues.
                 raise

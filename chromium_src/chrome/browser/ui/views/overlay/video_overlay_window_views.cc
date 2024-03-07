@@ -7,7 +7,7 @@
 #include "brave/browser/ui/views/overlay/brave_video_overlay_window_views.h"
 
 #define BRAVE_UPDATE_MAX_SIZE max_size_ = work_area.size();
-#define BackToTabLabelButton BraveBackToTabLabelButton
+#define BackToTabLabelButton  BraveBackToTabLabelButton
 
 #include "src/chrome/browser/ui/views/overlay/video_overlay_window_views.cc"
 

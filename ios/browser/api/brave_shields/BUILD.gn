@@ -12,7 +12,7 @@ source_set("brave_shields") {
     "adblock_filter_list_catalog_entry.mm",
     "adblock_service+private.h",
     "adblock_service.h",
-    "adblock_service.mm",
+     "adblock_service.mm",
   ]
   deps = [
     "//base",
