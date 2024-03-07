@@ -67,7 +67,6 @@ import org.chromium.chrome.browser.toolbar.top.ToolbarControlContainer;
 import org.chromium.chrome.browser.toolbar.top.TopToolbarCoordinator;
 import org.chromium.chrome.browser.ui.appmenu.AppMenuCoordinator;
 import org.chromium.chrome.browser.ui.appmenu.AppMenuDelegate;
-import org.chromium.chrome.browser.ui.edge_to_edge.EdgeToEdgeController;
 import org.chromium.chrome.browser.ui.messages.snackbar.SnackbarManager;
 import org.chromium.chrome.browser.ui.system.StatusBarColorController;
 import org.chromium.chrome.features.start_surface.StartSurface;
@@ -126,13 +125,11 @@ public class BraveToolbarManager extends ToolbarManager {
     private final Object mLock = new Object();
     private boolean mBottomControlsEnabled;
     private BraveScrollingBottomViewResourceFrameLayout mBottomControls;
-    private ObservableSupplier<EdgeToEdgeController> mEdgeToEdgeControllerSupplier;
 
     public BraveToolbarManager(
             AppCompatActivity activity,
             BrowserControlsSizer controlsSizer,
             FullscreenManager fullscreenManager,
-            ObservableSupplier<EdgeToEdgeController> edgeToEdgeControllerSupplier,
             ToolbarControlContainer controlContainer,
             CompositorViewHolder compositorViewHolder,
             Callback<Boolean> urlFocusChangedCallback,
@@ -175,13 +172,11 @@ public class BraveToolbarManager extends ToolbarManager {
             Supplier<EphemeralTabCoordinator> ephemeralTabCoordinatorSupplier,
             boolean initializeWithIncognitoColors,
             @Nullable BackPressManager backPressManager,
-            @Nullable BooleanSupplier overviewIncognitoSupplier,
-            ObservableSupplier<ReadAloudController> readAloudControllerSupplier) {
+            @Nullable BooleanSupplier overviewIncognitoSupplier) {
         super(
                 activity,
                 controlsSizer,
                 fullscreenManager,
-                edgeToEdgeControllerSupplier,
                 controlContainer,
                 compositorViewHolder,
                 urlFocusChangedCallback,
@@ -222,15 +217,13 @@ public class BraveToolbarManager extends ToolbarManager {
                 ephemeralTabCoordinatorSupplier,
                 initializeWithIncognitoColors,
                 backPressManager,
-                overviewIncognitoSupplier,
-                readAloudControllerSupplier);
+                overviewIncognitoSupplier);
 
         mOmniboxFocusStateSupplier = omniboxFocusStateSupplier;
         mLayoutStateProviderSupplier = layoutStateProviderSupplier;
         mActivity = activity;
         mWindowAndroid = windowAndroid;
         mCompositorViewHolder = compositorViewHolder;
-        mEdgeToEdgeControllerSupplier = edgeToEdgeControllerSupplier;
 
         if (isToolbarPhone()) {
             updateBottomToolbarVisibility();
@@ -305,7 +298,6 @@ public class BraveToolbarManager extends ToolbarManager {
                             mCompositorViewHolder.getResourceManager(),
                             mBrowserControlsSizer,
                             mFullscreenManager,
-                            mEdgeToEdgeControllerSupplier,
                             mBottomControls,
                             mTabGroupUi,
                             mTabObscuringHandler,
