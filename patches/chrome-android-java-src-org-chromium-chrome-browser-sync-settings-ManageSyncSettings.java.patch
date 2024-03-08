@@ -1,5 +1,5 @@
 diff --git a/chrome/android/java/src/org/chromium/chrome/browser/sync/settings/ManageSyncSettings.java b/chrome/android/java/src/org/chromium/chrome/browser/sync/settings/ManageSyncSettings.java
-index de8af25d0da47e35f5b6e116ba18f2e7d282e67c..87d5f663f2897f82f580c82e8562797394ce411b 100644
+index 3bce51dee439441b54bfb1e114954b3fda4b313e..bd83b5a20f04ffdfc62837f32e0d2d4c124c5956 100644
 --- a/chrome/android/java/src/org/chromium/chrome/browser/sync/settings/ManageSyncSettings.java
 +++ b/chrome/android/java/src/org/chromium/chrome/browser/sync/settings/ManageSyncSettings.java
 @@ -51,7 +51,7 @@ import org.chromium.chrome.browser.sync.ui.PassphraseCreationDialogFragment;
