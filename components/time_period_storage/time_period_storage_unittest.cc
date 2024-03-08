@@ -15,15 +15,19 @@
 #include "components/prefs/testing_pref_service.h"
 #include "testing/gtest/include/gtest/gtest.h"
 
-constexpr char kPrefName[] = "brave.weekly_test";
+constexpr char kListPrefName[] = "brave.weekly_test";
+constexpr char kDictPrefName[] = "brave.weekly_dict_test";
+constexpr char kDictKey1[] = "key1";
+constexpr char kDictKey2[] = "key2";
 
 class TimePeriodStorageTest : public ::testing::Test {
  public:
   TimePeriodStorageTest() {
-    pref_service_.registry()->RegisterListPref(kPrefName);
+    pref_service_.registry()->RegisterListPref(kListPrefName);
+    pref_service_.registry()->RegisterDictionaryPref(kDictPrefName);
   }
 
-  void InitStorage(size_t days) {
+  void InitStorage(size_t days, const char* dict_key) {
     std::unique_ptr<base::SimpleTestClock> clock =
         std::make_unique<base::SimpleTestClock>();
 
@@ -33,8 +37,9 @@ class TimePeriodStorageTest : public ::testing::Test {
     clock->SetNow(future_mock_time.LocalMidnight() - base::Hours(4));
     clock_ = clock.get();
 
-    state_ = std::make_unique<TimePeriodStorage>(&pref_service_, kPrefName,
-                                                 days, std::move(clock));
+    const char* pref_name = dict_key ? kDictPrefName : kListPrefName;
+    state_ = std::make_unique<TimePeriodStorage>(
+        &pref_service_, pref_name, dict_key, days, std::move(clock));
   }
 
  protected:
@@ -44,12 +49,12 @@ class TimePeriodStorageTest : public ::testing::Test {
 };
 
 TEST_F(TimePeriodStorageTest, StartsZero) {
-  InitStorage(7);
+  InitStorage(7, nullptr);
   EXPECT_EQ(state_->GetPeriodSum(), 0ULL);
 }
 
 TEST_F(TimePeriodStorageTest, AddsSavings) {
-  InitStorage(7);
+  InitStorage(7, nullptr);
   uint64_t saving = 10000;
   state_->AddDelta(saving);
   EXPECT_EQ(state_->GetPeriodSum(), saving);
@@ -61,7 +66,7 @@ TEST_F(TimePeriodStorageTest, AddsSavings) {
 }
 
 TEST_F(TimePeriodStorageTest, SubDelta) {
-  InitStorage(7);
+  InitStorage(7, nullptr);
   state_->AddDelta(5000);
   clock_->Advance(base::Days(1));
   state_->AddDelta(3000);
@@ -92,7 +97,7 @@ TEST_F(TimePeriodStorageTest, GetSumInCustomPeriod) {
   base::TimeDelta end_time_delta = base::Days(4) - base::Hours(1);
   uint64_t saving = 10000;
 
-  InitStorage(14);
+  InitStorage(14, nullptr);
   state_->AddDelta(saving);
 
   clock_->Advance(base::Days(1));
@@ -132,7 +137,7 @@ TEST_F(TimePeriodStorageTest, GetSumInCustomPeriod) {
 }
 
 TEST_F(TimePeriodStorageTest, ForgetsOldSavingsWeekly) {
-  InitStorage(7);
+  InitStorage(7, nullptr);
   uint64_t saving = 10000;
   state_->AddDelta(saving);
   EXPECT_EQ(state_->GetPeriodSum(), saving);
@@ -147,7 +152,7 @@ TEST_F(TimePeriodStorageTest, ForgetsOldSavingsWeekly) {
 }
 
 TEST_F(TimePeriodStorageTest, ForgetsOldSavingsMonthly) {
-  InitStorage(30);
+  InitStorage(30, nullptr);
   uint64_t saving = 10000;
   state_->AddDelta(saving);
   EXPECT_EQ(state_->GetPeriodSum(), saving);
@@ -162,7 +167,7 @@ TEST_F(TimePeriodStorageTest, ForgetsOldSavingsMonthly) {
 }
 
 TEST_F(TimePeriodStorageTest, RetrievesDailySavings) {
-  InitStorage(7);
+  InitStorage(7, nullptr);
   uint64_t saving = 10000;
   for (int day = 0; day <= 7; day++) {
     clock_->Advance(base::Days(1));
@@ -172,7 +177,7 @@ TEST_F(TimePeriodStorageTest, RetrievesDailySavings) {
 }
 
 TEST_F(TimePeriodStorageTest, HandlesSkippedDay) {
-  InitStorage(7);
+  InitStorage(7, nullptr);
   uint64_t saving = 10000;
   for (int day = 0; day < 7; day++) {
     clock_->Advance(base::Days(1));
@@ -184,7 +189,7 @@ TEST_F(TimePeriodStorageTest, HandlesSkippedDay) {
 }
 
 TEST_F(TimePeriodStorageTest, IntermittentUsageWeekly) {
-  InitStorage(7);
+  InitStorage(7, nullptr);
   uint64_t saving = 10000;
   for (int day = 0; day < 10; day++) {
     clock_->Advance(base::Days(2));
@@ -194,7 +199,7 @@ TEST_F(TimePeriodStorageTest, IntermittentUsageWeekly) {
 }
 
 TEST_F(TimePeriodStorageTest, IntermittentUsageMonthly) {
-  InitStorage(30);
+  InitStorage(30, nullptr);
   uint64_t saving = 10000;
   for (int day = 0; day < 40; day++) {
     clock_->Advance(base::Days(10));
@@ -204,7 +209,7 @@ TEST_F(TimePeriodStorageTest, IntermittentUsageMonthly) {
 }
 
 TEST_F(TimePeriodStorageTest, InfrequentUsageWeekly) {
-  InitStorage(7);
+  InitStorage(7, nullptr);
   uint64_t saving = 10000;
   state_->AddDelta(saving);
   clock_->Advance(base::Days(6));
@@ -213,7 +218,7 @@ TEST_F(TimePeriodStorageTest, InfrequentUsageWeekly) {
 }
 
 TEST_F(TimePeriodStorageTest, InfrequentUsageMonthly) {
-  InitStorage(30);
+  InitStorage(30, nullptr);
   uint64_t saving = 10000;
   state_->AddDelta(saving);
   clock_->Advance(base::Days(29));
@@ -222,7 +227,7 @@ TEST_F(TimePeriodStorageTest, InfrequentUsageMonthly) {
 }
 
 TEST_F(TimePeriodStorageTest, GetHighestValueInPeriod) {
-  InitStorage(7);
+  InitStorage(7, nullptr);
   uint64_t lowest_value = 20;
   uint64_t low_value = 50;
   uint64_t high_value = 75;
@@ -237,7 +242,7 @@ TEST_F(TimePeriodStorageTest, GetHighestValueInPeriod) {
 }
 
 TEST_F(TimePeriodStorageTest, RecordsHigherValueForToday) {
-  InitStorage(30);
+  InitStorage(30, nullptr);
   uint64_t low_value = 50;
   uint64_t high_value = 75;
   state_->ReplaceTodaysValueIfGreater(low_value);
@@ -253,7 +258,7 @@ TEST_F(TimePeriodStorageTest, RecordsHigherValueForToday) {
 }
 
 TEST_F(TimePeriodStorageTest, GetsHighestValueInWeekFromReplacement) {
-  InitStorage(30);
+  InitStorage(30, nullptr);
   // Add a low value a couple days after a high value,
   // should return highest day value.
   uint64_t low_value = 50;
@@ -267,7 +272,7 @@ TEST_F(TimePeriodStorageTest, GetsHighestValueInWeekFromReplacement) {
 }
 
 TEST_F(TimePeriodStorageTest, ReplaceIfGreaterForDate) {
-  InitStorage(30);
+  InitStorage(30, nullptr);
 
   state_->AddDelta(4);
   clock_->Advance(base::Days(1));
@@ -290,4 +295,18 @@ TEST_F(TimePeriodStorageTest, ReplaceIfGreaterForDate) {
   // should store, but should not be in sum because it's too old
   state_->ReplaceIfGreaterForDate(clock_->Now() - base::Days(31), 10);
   EXPECT_EQ(state_->GetPeriodSum(), 11U);
+}
+
+TEST_F(TimePeriodStorageTest, SegregatedListsInDictionary) {
+  InitStorage(7, kDictKey1);
+  state_->AddDelta(55);
+
+  InitStorage(7, kDictKey2);
+  state_->AddDelta(33);
+
+  InitStorage(7, kDictKey1);
+  EXPECT_EQ(state_->GetPeriodSum(), 55U);
+
+  InitStorage(7, kDictKey2);
+  EXPECT_EQ(state_->GetPeriodSum(), 33U);
 }
