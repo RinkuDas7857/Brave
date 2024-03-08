@@ -314,7 +314,7 @@ void AIChatMetrics::ReportContextMenuMetrics() {
       local_state_, prefs::kBraveChatP3ALastContextMenuUsageTime,
       kContextMenuLastUsageTimeHistogramName, true);
 
-  if (most_used_action) {
+  if (most_used_action && is_enabled_) {
     UMA_HISTOGRAM_ENUMERATION(kMostUsedContextMenuActionHistogramName,
                               *most_used_action);
   }
@@ -330,9 +330,11 @@ void AIChatMetrics::ReportContextMenuMetrics() {
         kContextMenuPremiumUsageCountHistogramName;
   }
 
-  p3a_utils::RecordToHistogramBucket(total_usage_histogram,
-                                     kContextMenuUsageBuckets, total_usages);
-  base::UmaHistogramExactLinear(total_usage_histogram_to_remove, -1, 7);
+  if (is_enabled_) {
+    p3a_utils::RecordToHistogramBucket(total_usage_histogram,
+                                       kContextMenuUsageBuckets, total_usages);
+    base::UmaHistogramExactLinear(total_usage_histogram_to_remove, -1, 7);
+  }
 }
 
 }  // namespace ai_chat
