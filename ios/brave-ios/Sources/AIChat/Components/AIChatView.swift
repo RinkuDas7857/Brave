@@ -299,7 +299,7 @@ public struct AIChatView: View {
               }
             } else {
               // The purchase was through the Brave Account Website
-              if BraveStoreSDK.shared.enviroment != .production {
+              if BraveStoreSDK.shared.environment != .production {
                 openURL(.brave.braveLeoManageSubscriptionStaging)
               } else {
                 openURL(.brave.braveLeoManageSubscriptionProd)
