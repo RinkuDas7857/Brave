@@ -886,7 +886,8 @@ bool ConversationDriver::IsPageContentsTruncated() {
 }
 
 float ConversationDriver::GetTruncatedContentPercentage() {
-  return static_cast<float>(GetCurrentModel().max_page_content_length) / static_cast<float>(article_text_.length()) * 100.0f;
+  return static_cast<float>(GetCurrentModel().max_page_content_length) /
+         static_cast<float>(article_text_.length()) * 100.0f;
 }
 
 void ConversationDriver::SubmitSummarizationRequest() {
