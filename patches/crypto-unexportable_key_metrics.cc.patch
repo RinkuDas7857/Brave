@@ -1,5 +1,5 @@
 diff --git a/crypto/unexportable_key_metrics.cc b/crypto/unexportable_key_metrics.cc
-index 662424286d08afbdb9d187ab9712656df9d67063..aaa8eb168b2d50dbf9acac2950cb7d99410c7bb1 100644
+index e0f9ee70c1bdd2cfec3df2df837f015ef1f83a98..8d07b54ca24262d5631cfdc7f21e2b1ca3aada09 100644
 --- a/crypto/unexportable_key_metrics.cc
 +++ b/crypto/unexportable_key_metrics.cc
 @@ -28,6 +28,7 @@ enum class KeyType {
@@ -18,7 +18,7 @@ index 662424286d08afbdb9d187ab9712656df9d67063..aaa8eb168b2d50dbf9acac2950cb7d99
          supported_virtual_algo = internal::TPMSupport::kECDSA;
          break;
        case SignatureVerifier::SignatureAlgorithm::RSA_PKCS1_SHA256:
-@@ -216,6 +218,7 @@ void MeasureTpmOperationsInternal() {
+@@ -216,6 +218,7 @@ void MeasureTpmOperationsInternal(UnexportableKeyProvider::Config config) {
    if (algo) {
      switch (*algo) {
        case SignatureVerifier::SignatureAlgorithm::ECDSA_SHA256:

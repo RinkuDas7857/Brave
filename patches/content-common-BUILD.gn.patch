@@ -1,5 +1,5 @@
 diff --git a/content/common/BUILD.gn b/content/common/BUILD.gn
-index 55765cb73b3e4c41ed785a9da8906741e62f4a21..125314d253ec610c6be6a54007e8aeba69db2370 100644
+index 7e67fb0c10bf7e3b99e94a4e026a1fb83ba0d133..b920bc51526141e65e929d68aa333625054c144c 100644
 --- a/content/common/BUILD.gn
 +++ b/content/common/BUILD.gn
 @@ -69,6 +69,7 @@ source_set("common") {
